@@ -29,7 +29,31 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] bubbleSort(final int[] array) {
-        return null;
+        while (!sorted(array)) {
+            for (int j = 1; j < array.length; j++) {
+                if (array[j] < array[j - 1]) {
+                    int temp = array[j];
+                    array[j] = array[j - 1];
+                    array[j - 1] = temp;
+                }
+            }
+        }
+        return array;
+    }
+
+    /**
+     * Checks if the array is sorted.
+     *
+     * @param array array to check
+     * @return whether the array is sorted
+     */
+    private static boolean sorted(final int[] array) {
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] < array[i - 1]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -39,7 +63,32 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] selectionSort(final int[] array) {
-        return null;
+        for (int i = 0; i < array.length; i++) {
+            int minIndex = minIndex(array, i);
+            if (i != minIndex) {
+                int temp = array[minIndex];
+                array[minIndex] = array[i];
+                array[i] = temp;
+            }
+        }
+        return array;
+    }
+
+    /**
+     * Finds the index of the minimum value.
+     *
+     * @param array array to find index of
+     * @param lo the lowest index
+     * @return index of the minimum value
+     */
+    private static int minIndex(final int[] array, final int lo) {
+        int index = lo;
+        for (int i = lo; i < array.length; i++) {
+            if (array[index] > array[i]) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     /**
@@ -49,9 +98,69 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] mergeSort(final int[] array) {
+        return mergeHelper(array);
+    }
+
+    /**
+     * Merge sort helper function.
+     *
+     * @param array the array to sort
+     * @return the sorted subarray
+     */
+    private static int[] mergeHelper(final int[] array) {
+        if (array != null && array.length > 1) {
+            int m = array.length / 2;
+            int[] arr1 = new int[m];
+            for (int i = 0; i < arr1.length; i++) {
+                arr1[i] = array[i];
+            }
+            arr1 = mergeHelper(arr1);
+            int[] arr2 = new int[array.length - m];
+            for (int i = 0; i < arr2.length; i++) {
+                arr2[i] = array[m + i];
+            }
+            arr2 = mergeHelper(arr2);
+            return mergeArrays(arr1, arr2);
+        }
+        if (array.length == 1) {
+            return array;
+        }
         return null;
     }
 
+    /**
+     * Merges two arrays.
+     * @param arr1 the first array to merge
+     * @param arr2 the second array to merge
+     * @return the merged arrays
+     */
+    private static int[] mergeArrays(final int[] arr1, final int[] arr2) {
+        if (arr1.length == 0) {
+            return arr2;
+        }
+        if (arr2.length == 0) {
+            return arr1;
+        }
+        int[] arr = new int[arr1.length + arr2.length];
+        int lIndex = 0;
+        int rIndex = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (rIndex == arr2.length) {
+                arr[i] = arr1[lIndex];
+                lIndex++;
+            } else if (lIndex == arr1.length) {
+                arr[i] = arr2[rIndex];
+                rIndex++;
+            } else if (arr1[lIndex] > arr2[rIndex]) {
+                arr[i] = arr2[rIndex];
+                rIndex++;
+            } else {
+                arr[i] = arr1[lIndex];
+                lIndex++;
+            }
+        }
+        return arr;
+    }
     /**
      * Merge helper function that merges two sorted arrays into a single sorted array.
      * <p>
@@ -65,7 +174,7 @@ public class Sorting {
      * @return the sorted array, or null on failure
      */
     static int[] merge(final int[] arr, final int l, final int m, final int r) {
-        int n1 = m - l + 1;
+        int n1 = m - l;
         int n2 = r - m;
 
         int[] left = new int[n1];
@@ -75,10 +184,20 @@ public class Sorting {
             left[i] = arr[l + i];
         }
         for (int j = 0; j < n2; ++j) {
-            right[j] = arr[m + 1 + j];
+            right[j] = arr[m + j];
         }
-
+        int lIndex = 0;
+        int rIndex = 0;
         /* TO DO: Merge left and right array here */
+        for (int i = l; i < r; i++) {
+            if (left[lIndex] > right[rIndex]) {
+                arr[i] = right[rIndex];
+                rIndex++;
+            } else {
+                arr[i] = left[lIndex];
+                lIndex++;
+            }
+        }
         return arr;
     }
 
